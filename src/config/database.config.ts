@@ -37,6 +37,12 @@ class DatabaseConfig {
             )
         });
     }
+
+    public clear(): void {
+        this.connection.serialize(() => {
+            this.connection.run('DELETE FROM movies');
+        });
+    }
 }
 
 export default new DatabaseConfig();

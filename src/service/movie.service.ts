@@ -1,4 +1,3 @@
-import { log } from "node:console";
 import databaseConfig from "../config/database.config";
 import { Movie } from "../model/movie.model";
 

@@ -15,26 +15,28 @@ export class MovieController {
 
         try {
             const _movies = await movieService.getOnlyWinners();
-            const _results: MovieProducerResult[] = this.calcProducersInterval(_movies);
-
-            const _intervals = _results.map(_result => _result.interval);
-
-            // calcula qual seria o valor a ser considerado como menor
-            const _maxIntervalToBeUsedAsMin = _intervals
-                .reduce((_previous, _current) => _current <= _previous ? _current : _previous , _results[0].interval);
             
-            // calcula qual seria o valor a ser considerado como maior
-            const _maxIntervalToBeUsedAsMax = _intervals
-                .reduce((_previous, _current) => _current >= _previous ? _current : _previous , _results[0].interval);
+            if (_movies.length > 0) {
+                const _results: MovieProducerResult[] = this.calcProducersInterval(_movies);
+                const _intervals = _results.map(_result => _result.interval);
 
-            for (const _result of _results) {
-                // remove o extraFields
-                delete _result.extraFields;
+                // calcula qual seria o valor a ser considerado como menor
+                const _maxIntervalToBeUsedAsMin = _intervals
+                    .reduce((_previous, _current) => _current <= _previous ? _current : _previous , _results[0].interval);
+                
+                // calcula qual seria o valor a ser considerado como maior
+                const _maxIntervalToBeUsedAsMax = _intervals
+                    .reduce((_previous, _current) => _current >= _previous ? _current : _previous , _results[0].interval);
 
-                if (_result.interval === _maxIntervalToBeUsedAsMin) {
-                    _returnData.min.push(_result);
-                } else if (_result.interval === _maxIntervalToBeUsedAsMax) {
-                    _returnData.max.push(_result);
+                for (const _result of _results) {
+                    // remove o extraFields
+                    delete _result.extraFields;
+
+                    if (_result.interval === _maxIntervalToBeUsedAsMin) {
+                        _returnData.min.push(_result);
+                    } else if (_result.interval === _maxIntervalToBeUsedAsMax) {
+                        _returnData.max.push(_result);
+                    }
                 }
             }
         } catch (err) {
@@ -84,7 +86,7 @@ export class MovieController {
                     if (_movies[_index + 1] !== undefined) {
                         const calcInterval = (_movies[_index + 1].year - _movie.year);
         
-                        if (calcInterval <= interval) {
+                        if (calcInterval < interval) {
                             previousWin = _movie.year;
                             followingWin = _movies[_index + 1].year;
                             interval = Math.abs(calcInterval);
