@@ -10,18 +10,25 @@ export class MovieService {
      * @param dataInsert 
      */
     public insert(dataInsert: Movie): void {
-        const dataToSave = {
-            ...dataInsert,
-            winner: dataInsert.status ? 1 : 0,
-        };
-
         try {
             databaseConfig.connection
                 .prepare('INSERT INTO movies (year, title, studios, producers, winner) VALUES (?, ?, ?, ?, ?)')
-                .run(Object.values(dataToSave))
+                .run(Object.values(dataInsert))
                 .finalize();
         } catch (err) {
             console.log(err);
         }
+    }
+
+    public async getOnlyWinners(): Promise<Movie[]> {
+        return new Promise((resolve, reject) => {
+            databaseConfig.connection.all('SELECT * FROM movies WHERE winner = 1 ORDER BY year ASC', (error, _movies: Movie[]) => {
+                if (error) {
+                    reject('Houve um erro ao buscar os dados dos filmes');
+                }
+    
+                resolve(_movies);
+            });
+        });
     }
 }

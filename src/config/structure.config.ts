@@ -12,8 +12,8 @@ export class StructureConfig {
     /**
      * metodo para o recebimento dos dados em csv e armazena-los no banco
      */
-    public static async initial() {
-        const folder: string = path.join(__dirname,  '../../data');
+    public static async initial(): Promise<void> {
+        const folder: string = path.join(__dirname, '../../data');
         const movieService: MovieService = new MovieService();
 
         try {
@@ -24,6 +24,7 @@ export class StructureConfig {
                 }));
 
             for await (const _data of dataList) {
+                _data['winner'] = (_data['winner'] === 'yes') ? 1 : 0
                 movieService.insert(_data);
             }
         } catch (err) {
