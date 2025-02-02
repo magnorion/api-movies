@@ -25,7 +25,7 @@ export class MovieService {
                 if (error) {
                     reject('Houve um erro ao buscar os dados dos filmes');
                 }
-    
+
                 resolve(_movies);
             });
         });

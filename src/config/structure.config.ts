@@ -5,6 +5,7 @@ import { MovieService } from "../service/movie.service";
 import { ConfigEnum } from '../enum/config.enum';
 import { ErrorMessageEnum } from '../enum/error.enum';
 import databaseConfig from './database.config';
+import { Movie } from '../model/movie.model';
 
 /**
  * classe para configuracao da estrutura inicial dos dados
@@ -35,8 +36,15 @@ export class StructureConfig {
                 }));
 
             for await (const _data of dataList) {
-                _data['winner'] = ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0
-                _movieService.insert(_data);
+                const _dataToSave: Movie = {
+                    year: _data.year,
+                    title: _data.title,
+                    studios: _data.studios,
+                    producers: _data.producers,
+                    winner: ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0,
+                };
+
+                _movieService.insert(_dataToSave);
             }
         } catch (error: unknown) {
             if (error instanceof Error) {

@@ -18,24 +18,27 @@ export class MovieController {
             
             if (_movies.length > 0) {
                 const _results: MovieProducerResult[] = this.calcProducersInterval(_movies);
-                const _intervals = _results.map(_result => _result.interval);
 
-                // calcula qual seria o valor a ser considerado como menor
-                const _maxIntervalToBeUsedAsMin = _intervals
-                    .reduce((_previous, _current) => _current <= _previous ? _current : _previous , _results[0].interval);
-                
-                // calcula qual seria o valor a ser considerado como maior
-                const _maxIntervalToBeUsedAsMax = _intervals
-                    .reduce((_previous, _current) => _current >= _previous ? _current : _previous , _results[0].interval);
-
-                for (const _result of _results) {
-                    // remove o extraFields
-                    delete _result.extraFields;
-
-                    if (_result.interval === _maxIntervalToBeUsedAsMin) {
-                        _returnData.min.push(_result);
-                    } else if (_result.interval === _maxIntervalToBeUsedAsMax) {
-                        _returnData.max.push(_result);
+                if (_results.length > 0) {
+                    const _intervals = _results.map(_result => _result.interval);
+    
+                    // calcula qual seria o valor a ser considerado como menor
+                    const _maxIntervalToBeUsedAsMin = _intervals
+                        .reduce((_previous, _current) => _current <= _previous ? _current : _previous , _results[0].interval);
+                    
+                    // calcula qual seria o valor a ser considerado como maior
+                    const _maxIntervalToBeUsedAsMax = _intervals
+                        .reduce((_previous, _current) => _current >= _previous ? _current : _previous , _results[0].interval);
+    
+                    for (const _result of _results) {
+                        // remove o extraFields
+                        delete _result.extraFields;
+    
+                        if (_result.interval === _maxIntervalToBeUsedAsMin) {
+                            _returnData.min.push(_result);
+                        } else if (_result.interval === _maxIntervalToBeUsedAsMax) {
+                            _returnData.max.push(_result);
+                        }
                     }
                 }
             }
