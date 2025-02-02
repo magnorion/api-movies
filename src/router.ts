@@ -4,8 +4,18 @@ import { MovieController } from './controller/movie.controller';
 const _router = Router();
 const _movieController = new MovieController();
 
-_router.get('', (req, res) => {
-    const request = _movieController.getProducersInterval();
+_router.get('', async (req, res) => {
+    try {
+        const _request = await _movieController.getProducersInterval();
+        
+        res.json(_request);
+    } catch (err) {
+        res.status(401).json({
+            min: [],
+            max: [],
+            message: 'Nao existem dados para apresentar'
+        });
+    }
 })
 
 _router.post('', (req, res) => {});

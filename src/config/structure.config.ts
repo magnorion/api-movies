@@ -24,7 +24,7 @@ export class StructureConfig {
                 }));
 
             for await (const _data of dataList) {
-                _data['winner'] = (_data['winner'] === 'yes') ? 1 : 0
+                _data['winner'] = ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0
                 movieService.insert(_data);
             }
         } catch (err) {
