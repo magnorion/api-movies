@@ -21,7 +21,7 @@ const server = http.createServer(app);
 export default server;
 
 // inicia os o banco com os dados
-if (process.env.JEST_WORKER_ID === 'undefined') {
+if (process.env.JEST_WORKER_ID === undefined) {
     StructureConfig.initial();
 }
 
