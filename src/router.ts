@@ -18,12 +18,32 @@ _router.get('', async (req, res) => {
     }
 })
 
-_router.post('', (req, res) => {});
+_router.post('', (req, res) => {
+    res.json({
+        min: [],
+        max: []
+    });
+});
 
-_router.delete('', (req, res) => {});
+_router.delete('', (req, res) => {
+    res.json({
+        min: [],
+        max: []
+    });
+});
 
-_router.patch('', (req, res) => {});
+_router.put('', (req, res) => {
+    res.json({
+        min: [],
+        max: []
+    });
+});
 
-_router.put('', (req, res) => {});
+_router.patch('', (req, res) => {
+    res.json({
+        min: [],
+        max: []
+    });
+});
 
 export default _router;
