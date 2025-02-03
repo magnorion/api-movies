@@ -3,7 +3,7 @@ import { MovieProducerResult, MovieRequest } from "../interface/movie.interface"
 import { Movie } from "../model/movie.model";
 import { MovieService } from "../service/movie.service";
 import { SystemMessageEnum } from "../enum/system-message.enum";
-import { RequestInterface } from "../interface/request.interface";
+import { ResponseInterface } from "../interface/request.interface";
 
 export class MovieController {
     private calcProducersInterval(_movies: Movie[]) {
@@ -119,8 +119,8 @@ export class MovieController {
      * trata os dados da rota de insercao
      * @param _data 
      */
-    public async insertMovieData(_data: Movie): Promise<RequestInterface> {
-        let response: RequestInterface = { message: '', error: false, content: [] };
+    public async insertMovieData(_data: Movie): Promise<ResponseInterface> {
+        let response: ResponseInterface = { message: '', error: false, content: [] };
 
         try {
             const _dataToSave = new Movie();
@@ -141,12 +141,92 @@ export class MovieController {
             const _movieService = new MovieService();
 
             // insere os dados no banco
-            _movieService.insert(_dataToSave);
+            const _lastId = await _movieService.insert(_dataToSave);
+            _dataToSave.id = _lastId;
 
             response.message = SystemMessageEnum.VALID_DATA_INSERT;
+            response.content = _dataToSave;
         } catch (err) {
             if (err instanceof Error) {
                 console.log(`ERROR ON INSERT DATA ${new Date().toISOString()}`, err.message);
+                
+                response.message = SystemMessageEnum.DATA_VALIDATION_ERROR;
+                response.error = true;
+            }
+        }
+
+        return response;
+    }
+
+    public async deleteMovieDataById(_id: number): Promise<ResponseInterface> {
+        let response: ResponseInterface = { message: '', error: false, content: [] };
+
+        try {
+            const _movieService = new MovieService();
+            const _movieToRemove = await _movieService.getById(_id);
+
+            if (_movieToRemove && _movieToRemove.id !== undefined) {
+                const _delete = await _movieService.deleteById(_id);
+
+                if (!_delete) {
+                    response.message = SystemMessageEnum.COULD_NOT_DELETE;
+                    response.error = true;
+                } else {
+                    response.message = SystemMessageEnum.DATA_REMOVED_SUCCESS;
+                    response.content = _movieToRemove;
+                }
+            }
+
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log(`ERROR ON DELETE DATA ${new Date().toISOString()}`, err.message);
+                
+                response.message = SystemMessageEnum.DATA_VALIDATION_ERROR;
+                response.error = true;
+            }
+        }
+
+        return response;
+    }
+
+    public async updateMovieDataById(_id: number, _movie: Movie): Promise<ResponseInterface> {
+        let response: ResponseInterface = { message: '', error: false, content: [] };
+
+        try {
+            const _movieService = new MovieService();
+
+            const _dataToUpdate = new Movie();
+
+            _dataToUpdate.year = Number(_movie.year);
+            _dataToUpdate.title = _movie.title;
+            _dataToUpdate.studios = _movie.studios;
+            _dataToUpdate.producers = _movie.producers;
+            _dataToUpdate.winner = ((_movie['winner'] as unknown as string).toLowerCase() === 'yes') ? 1 : 0;
+
+            const checkForErrors = await validate(_dataToUpdate);
+            
+            if (checkForErrors && checkForErrors.length > 0) {
+                response.content = checkForErrors;
+                throw new Error(SystemMessageEnum.DATA_VALIDATION_ERROR);
+            }
+
+            const _checkMovieToUpdate = await _movieService.getById(_id);
+
+            if (_checkMovieToUpdate && _checkMovieToUpdate.id !== undefined) {
+                const _update = await _movieService.updateById(_id, _movie);
+
+                if (!_update) {
+                    response.message = SystemMessageEnum.DATA_VALIDATION_ERROR;
+                    response.error = true;
+                } else {
+                    response.message = SystemMessageEnum.DATA_UPDATED_SUCCESS;
+                    response.content = _dataToUpdate;
+                }
+            }
+
+        } catch (err) {
+            if (err instanceof Error) {
+                console.log(`ERROR ON DELETE DATA ${new Date().toISOString()}`, err.message);
                 
                 response.message = SystemMessageEnum.DATA_VALIDATION_ERROR;
                 response.error = true;

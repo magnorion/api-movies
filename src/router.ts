@@ -25,28 +25,31 @@ _router.post('', async (req, res) => {
         res.status(400);
     }
 
+    res.status(201);
     res.json(_request);
 });
 
-_router.delete('', (req, res) => {
-    res.json({
-        min: [],
-        max: []
-    });
+_router.delete('/:id', async (req, res) => {
+    const _id = Number(req.params.id);
+    const _request = await _movieController.deleteMovieDataById(_id);
+
+    if (_request.error) {
+        res.status(400);
+    }
+
+    res.json(_request);
 });
 
-_router.put('', (req, res) => {
-    res.json({
-        min: [],
-        max: []
-    });
-});
+_router.put('/:id', async (req, res) => {
+    const _id = Number(req.params.id);
+    const _request = await _movieController.updateMovieDataById(_id, req.body);
+    
 
-_router.patch('', (req, res) => {
-    res.json({
-        min: [],
-        max: []
-    });
+    if (_request.error) {
+        res.status(400);
+    }
+
+    res.json(_request);
 });
 
 export default _router;
