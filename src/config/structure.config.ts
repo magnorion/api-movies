@@ -3,9 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import { MovieService } from "../service/movie.service";
 import { ConfigEnum } from '../enum/config.enum';
-import { ErrorMessageEnum } from '../enum/error.enum';
+import { SystemMessageEnum } from '../enum/system-message.enum';
 import databaseConfig from './database.config';
 import { Movie } from '../model/movie.model';
+import { validate } from 'class-validator';
 
 /**
  * classe para configuracao da estrutura inicial dos dados
@@ -26,7 +27,7 @@ export class StructureConfig {
             databaseConfig.clear();
 
             if (!fs.existsSync(_path)) {
-                throw new Error(ErrorMessageEnum.FILE_NOT_EXIST)
+                throw new Error(SystemMessageEnum.FILE_NOT_EXIST);
             }
 
             const dataList = fs.createReadStream(_path)
@@ -36,14 +37,21 @@ export class StructureConfig {
                 }));
 
             for await (const _data of dataList) {
-                const _dataToSave: Movie = {
-                    year: _data.year,
-                    title: _data.title,
-                    studios: _data.studios,
-                    producers: _data.producers,
-                    winner: ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0,
-                };
+                const _dataToSave = new Movie();
+                _dataToSave.year = Number(_data.year);
+                _dataToSave.title = _data.title;
+                _dataToSave.studios = _data.studios;
+                _dataToSave.producers = _data.producers;
+                _dataToSave.winner = ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0;
 
+                const checkForErrors = await validate(_dataToSave);
+
+                if (checkForErrors && checkForErrors.length > 0) {
+                    console.log(checkForErrors);
+                    throw new Error(SystemMessageEnum.DATA_VALIDATION_ERROR);
+                }
+
+                // insere os dados no banco
                 _movieService.insert(_dataToSave);
             }
         } catch (error: unknown) {

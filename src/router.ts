@@ -10,7 +10,7 @@ _router.get('', async (req, res) => {
         
         res.json(_request);
     } catch (err) {
-        res.status(401).json({
+        res.status(404).json({
             min: [],
             max: [],
             message: 'Nao existem dados para apresentar'
@@ -18,11 +18,14 @@ _router.get('', async (req, res) => {
     }
 })
 
-_router.post('', (req, res) => {
-    res.json({
-        min: [],
-        max: []
-    });
+_router.post('', async (req, res) => {
+    const _request = await _movieController.insertMovieData(req.body);
+
+    if (_request.error) {
+        res.status(400);
+    }
+
+    res.json(_request);
 });
 
 _router.delete('', (req, res) => {

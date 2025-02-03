@@ -28,6 +28,7 @@ class DatabaseConfig {
         this.connection.serialize(() => {
             this.connection.run(
                 'CREATE TABLE movies (' +
+                'id INTEGER PRIMARY KEY,' +
                 'year INTEGER,' +
                 'title TEXT,' +
                 'studios TEXT,' +

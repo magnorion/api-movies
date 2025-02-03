@@ -1,9 +1,26 @@
+import {IsInt, IsNotEmpty, IsNumber, IsString, Max, Min} from 'class-validator';
+
 export class Movie {
-    constructor(
-        public year: number,
-        public title: string,
-        public studios: string,
-        public producers: string,
-        public winner: number,
-    ) {}
+    public id?: number;
+
+    @IsInt()
+    @IsNotEmpty()
+    public year!: number;
+
+    @IsString()
+    @IsNotEmpty()
+    public title!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    public studios!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    public producers!: string;
+
+    @IsNumber()
+    @Min(0)
+    @Max(1)
+    public winner!: number;
 }
