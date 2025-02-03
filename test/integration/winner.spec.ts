@@ -19,7 +19,7 @@ describe('Test winners integration', () => {
         request = await supertest(server)
             .get('/v1/producers')
             .set("content-type", "application/json");
-
+    
         expect(request.status).toBe(200);
     });
 
@@ -41,5 +41,59 @@ describe('Test winners integration', () => {
         expect(request.body.max.length).toBeGreaterThan(0);
         
         expect(request.body.min[0].interval).toBeLessThan(request.body.max[0].interval);
+    });
+
+    it ('Should create a new movie', async () => {
+        const _movieData = {
+            year: 2050,
+            title: 'Viagem de Chihiro',
+            studios: 'Ghibi',
+            producers: 'Miazaki',
+            winner: 'yes'
+        };
+        
+        request = await supertest(server)
+            .post('/v1/producers')
+            .send(_movieData)
+            .set("content-type", "application/json");
+
+        expect(request.body.error).toBe(false);
+        expect(request.body.content.id).toBeTruthy();
+    });
+    
+    it ('Should edit a movie', async () => {
+        const _movieData = {
+            year: 2050,
+            title: 'Viagem de Chihiro',
+            studios: 'Ghibi',
+            producers: 'Miazaki',
+            winner: 'yes',
+            id: 208
+        };
+        
+        request = await supertest(server)
+            .put('/v1/producers/208')
+            .send(_movieData)
+            .set("content-type", "application/json");
+
+        expect(request.body.error).toBe(false);
+    });
+    
+    it ('Should delete a movie', async () => {
+        const _movieData = {
+            year: 2050,
+            title: 'Viagem de Chihiro',
+            studios: 'Ghibi',
+            producers: 'Miazaki',
+            winner: 'yes',
+            id: 208
+        };
+        
+        request = await supertest(server)
+            .delete('/v1/producers/208')
+            .send(_movieData)
+            .set("content-type", "application/json");
+
+        expect(request.body.error).toBe(false);
     });
 });

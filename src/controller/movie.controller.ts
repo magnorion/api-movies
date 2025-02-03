@@ -131,13 +131,6 @@ export class MovieController {
             _dataToSave.producers = _data.producers;
             _dataToSave.winner = ((_data['winner'] as unknown as string).toLowerCase() === 'yes') ? 1 : 0;
 
-            const checkForErrors = await validate(_dataToSave);
-            
-            if (checkForErrors && checkForErrors.length > 0) {
-                response.content = checkForErrors;
-                throw new Error(SystemMessageEnum.DATA_VALIDATION_ERROR);
-            }
-
             const _movieService = new MovieService();
 
             // insere os dados no banco
@@ -202,13 +195,6 @@ export class MovieController {
             _dataToUpdate.studios = _movie.studios;
             _dataToUpdate.producers = _movie.producers;
             _dataToUpdate.winner = ((_movie['winner'] as unknown as string).toLowerCase() === 'yes') ? 1 : 0;
-
-            const checkForErrors = await validate(_dataToUpdate);
-            
-            if (checkForErrors && checkForErrors.length > 0) {
-                response.content = checkForErrors;
-                throw new Error(SystemMessageEnum.DATA_VALIDATION_ERROR);
-            }
 
             const _checkMovieToUpdate = await _movieService.getById(_id);
 

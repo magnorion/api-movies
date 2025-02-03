@@ -17,7 +17,7 @@ export class StructureConfig {
     /**
      * metodo para o recebimento dos dados em csv e armazena-los no banco
      */
-    public static async initial(_origin: ConfigEnum = ConfigEnum.REAL_DATA): Promise<void> {
+    public static async initial(_origin: ConfigEnum = ConfigEnum.MOCK_DATA): Promise<void> {
         const _folder: string = path.join(__dirname, '../../data');
         const _movieService: MovieService = new MovieService();
         const _path = `${_folder}/${_origin}`;
@@ -43,13 +43,6 @@ export class StructureConfig {
                 _dataToSave.studios = _data.studios;
                 _dataToSave.producers = _data.producers;
                 _dataToSave.winner = ((_data['winner'] as string).toLowerCase() === 'yes') ? 1 : 0;
-
-                const checkForErrors = await validate(_dataToSave);
-
-                if (checkForErrors && checkForErrors.length > 0) {
-                    console.log(checkForErrors);
-                    throw new Error(SystemMessageEnum.DATA_VALIDATION_ERROR);
-                }
 
                 // insere os dados no banco
                 _movieService.insert(_dataToSave);
