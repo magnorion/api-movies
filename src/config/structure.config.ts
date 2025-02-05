@@ -6,7 +6,6 @@ import { ConfigEnum } from '../enum/config.enum';
 import { SystemMessageEnum } from '../enum/system-message.enum';
 import databaseConfig from './database.config';
 import { Movie } from '../model/movie.model';
-import { validate } from 'class-validator';
 
 /**
  * classe para configuracao da estrutura inicial dos dados
@@ -17,7 +16,7 @@ export class StructureConfig {
     /**
      * metodo para o recebimento dos dados em csv e armazena-los no banco
      */
-    public static async initial(_origin: ConfigEnum = ConfigEnum.MOCK_DATA): Promise<void> {
+    public static async initial(_origin: ConfigEnum = ConfigEnum.REAL_DATA): Promise<void> {
         const _folder: string = path.join(__dirname, '../../data');
         const _movieService: MovieService = new MovieService();
         const _path = `${_folder}/${_origin}`;

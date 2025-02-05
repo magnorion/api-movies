@@ -43,7 +43,6 @@ _router.delete('/:id', async (req, res) => {
 _router.put('/:id', async (req, res) => {
     const _id = Number(req.params.id);
     const _request = await _movieController.updateMovieDataById(_id, req.body);
-    
 
     if (_request.error) {
         res.status(400);

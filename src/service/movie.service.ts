@@ -13,10 +13,6 @@ export class MovieService {
                 databaseConfig.connection
                 .run('INSERT INTO movies (year, title, studios, producers, winner) VALUES (?, ?, ?, ?, ?)',
                     Object.values(dataInsert), function (_err) {
-                        if (_err) {
-                            reject(null);
-                        }
-
                         resolve(this.lastID)
                     });
             })
@@ -25,10 +21,6 @@ export class MovieService {
     public async getOnlyWinners(): Promise<Movie[]> {
         return new Promise((resolve, reject) => {
             databaseConfig.connection.all('SELECT * FROM movies WHERE winner = 1 ORDER BY year ASC', (error, _movies: Movie[]) => {
-                if (error) {
-                    reject('Houve um erro ao buscar os dados dos filmes');
-                }
-
                 resolve(_movies);
             });
         });
@@ -36,28 +28,24 @@ export class MovieService {
 
     public getById(_id: number): Promise<Movie> {
         return new Promise((resolve, reject) => {
-            databaseConfig.connection
-            .prepare('SELECT * FROM movies WHERE id = ?')
-            .each(_id, (_error, _result: Movie) => {
-                if (_error) {
-                    reject('Houve um erro ao buscar os dados dos filmes');
-                }
-
-                resolve(_result);
+            databaseConfig.connection.serialize(() => {
+                databaseConfig.connection
+                .all('SELECT * FROM movies WHERE id = ?', _id, (_error: Error, _result: Movie[]) => {
+                    resolve(_result[0]);
+                })
             })
         });
     }
 
     public deleteById(_id: number): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            databaseConfig.connection
-            .run('DELETE FROM movies WHERE id = ?', [_id], (_error) => {
-                if (_error) {
-                    resolve(false);
-                }
-
-                resolve(true);
-            });
+            databaseConfig.connection.serialize(() => {
+                databaseConfig.connection
+                .prepare('DELETE FROM movies WHERE id = ?')
+                .run(_id, (_error: Error) => {
+                    resolve(true);
+                });
+            })
         });
     }
 
@@ -73,11 +61,6 @@ export class MovieService {
                 _movie.winner, 
                 _id],
                 (_error) => {
-                
-                    if (_error) {
-                        resolve(false);
-                    }
-
                     resolve(true);
                 }
             )

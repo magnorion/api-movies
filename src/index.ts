@@ -20,9 +20,13 @@ const server = http.createServer(app);
 // exporta a referencia do app para ser usado em demais ocacioes
 export default server;
 
-// inicia os o banco com os dados
-if (process.env.JEST_WORKER_ID === undefined) {
-    StructureConfig.initial();
+const startApp = async (): Promise<void> => {
+    // inicia os o banco com os dados
+    if (process.env.JEST_WORKER_ID === undefined) {
+        await StructureConfig.initial();
+    }
+    
+    server.listen(3000, () => console.log('API RUNNING AT PORT 3000'));
 }
 
-server.listen(3000, () => console.log('API RUNNING AT PORT 3000'));
+startApp();

@@ -15,7 +15,6 @@
   "description": "",
   "dependencies": {
     "body-parser": "^1.20.3",
-    "class-validator": "^0.14.1",
     "csv": "^6.3.11",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -23,9 +22,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.7",
-    "@babel/plugin-transform-class-properties": "^7.25.9",
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-transform-class-properties": "^7.25.9",
     "@babel/preset-env": "^7.26.7",
     "@babel/preset-typescript": "^7.26.0",
     "@jest/globals": "^29.7.0",
