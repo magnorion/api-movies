@@ -50,6 +50,9 @@ describe('Test winners integration', () => {
 
         expect(request.body.min.length).toEqual(1);
         expect(request.body.min[0].interval).toEqual(1);
+        expect(request.body.min[0].producer).toEqual('Joel Silver');
+        expect(request.body.min[0].previousWin).toEqual(1990);
+        expect(request.body.min[0].followingWin).toEqual(1991);
     });
     
     it ('Should return one result for max and the interval is 13', async () => {
@@ -59,6 +62,9 @@ describe('Test winners integration', () => {
 
         expect(request.body.min.length).toEqual(1);
         expect(request.body.max[0].interval).toEqual(13);
+        expect(request.body.max[0].producer).toEqual('Matthew Vaughn');
+        expect(request.body.max[0].previousWin).toEqual(2002);
+        expect(request.body.max[0].followingWin).toEqual(2015);
     });
 
     it ('Should fails when tries to create a new movie with bad payload', async () => {
